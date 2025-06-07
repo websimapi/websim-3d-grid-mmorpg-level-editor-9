@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Grid MMORPG Level Editor</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%);
+            color: #ffffff;
+            overflow: hidden;
+        }
+        
+        #ui-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .ui-section {
+            margin-bottom: 20px;
+        }
+        
+        .ui-section h3 {
+            margin: 0 0 10px 0;
+            color: #64ffda;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        button.active {
+            background: linear-gradient(135deg, #64ffda 0%, #00b4d8 100%);
+            box-shadow: 0 0 20px rgba(100, 255, 218, 0.3);
+        }
+        
+        .color-picker {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-option.active {
+            border-color: #64ffda;
+            box-shadow: 0 0 15px rgba(100, 255, 218, 0.5);
+        }
+        
+        #info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+            color: #a0a0a0;
+        }
+        
+        #canvas {
+            display: block;
+            cursor: crosshair;
+        }
+    </style>
+</head>
+<body>
+    <div id="ui-container">
+        <div class="ui-section">
+            <h3>Mode</h3>
+            <div class="button-group">
+                <button id="placeMode" class="active">Place</button>
+                <button id="deleteMode">Delete</button>
+            </div>
+        </div>
+        
+        <div class="ui-section">
+            <h3>Slab Color</h3>
+            <div class="color-picker">
+                <div class="color-option active" style="background: #ff6b6b" data-color="#ff6b6b"></div>
+                <div class="color-option" style="background: #4ecdc4" data-color="#4ecdc4"></div>
+                <div class="color-option" style="background: #45b7d1" data-color="#45b7d1"></div>
+                <div class="color-option" style="background: #96ceb4" data-color="#96ceb4"></div>
+                <div class="color-option" style="background: #ffeaa7" data-color="#ffeaa7"></div>
+                <div class="color-option" style="background: #dda0dd" data-color="#dda0dd"></div>
+                <div class="color-option" style="background: #98d8c8" data-color="#98d8c8"></div>
+                <div class="color-option" style="background: #a29bfe" data-color="#a29bfe"></div>
+            </div>
+        </div>
+        
+        <div class="ui-section">
+            <h3>Actions</h3>
+            <div class="button-group">
+                <button id="clearAll">Clear All</button>
+                <button id="saveLevel">Save Level</button>
+                <button id="loadLevel">Load Level</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="info">
+        <div>Grid: 32x32 | Click to place/delete slabs</div>
+        <div>Mouse wheel: Zoom | Right click + drag: Rotate view</div>
+        <div id="coords">Position: -</div>
+    </div>
+    
+    <canvas id="canvas"></canvas>
+    
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.157.0/build/three.module.js",
+            "three/examples/jsm/controls/OrbitControls.js": "https://unpkg.com/three@0.157.0/examples/jsm/controls/OrbitControls.js"
+        }
+    }
+    </script>
+    
+    <script type="module" src="editor.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4c6229722a6346bc8eb5cb0e5eae5d41","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
+
